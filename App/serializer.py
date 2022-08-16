@@ -2,6 +2,7 @@ from dataclasses import fields
 from pyexpat import model
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from App.models import Login_model,student_db
 
 class User_serializer(serializers.ModelSerializer):
     class Meta:
@@ -14,4 +15,14 @@ class User_serializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class Login_user(serializers.ModelSerializer):
+    class Meta:
+        model = Login_model
+        fields = ['username','password']
+
+class Student_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = student_db
+        fields = "__all__"
 

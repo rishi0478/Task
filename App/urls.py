@@ -19,12 +19,29 @@ Including another URLconf
 
 from django.urls import path
 from App import views
-# from Authentication_system.App.views import home_page
+
+# --------- Jwt -------
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+
+)
+
+
 
 urlpatterns = [
     path('',views.auth_system_func,name='register'),
     path('login',views.login_user,name="login"),
     path('home',views.home_page,name='home'),
     path('Verify/<auth_token>',views.Verify_email),
-    path('logout',views.logout_session,name='logout')
+    path('logout',views.logout_session,name='logout'),
+    path('ll',views.serializer_login),
+
+    # --------- Jwt token --------
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # ------ New end point --------
+    path('ss',views.func.as_view()),
 ]
