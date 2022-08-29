@@ -23,11 +23,11 @@ from App import views
 # --------- Jwt -------
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
+    TokenRefreshView
 
 )
 
+from rest_framework_simplejwt.views import TokenBlacklistView
 
 
 urlpatterns = [
@@ -41,7 +41,8 @@ urlpatterns = [
     # --------- Jwt token --------
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     # ------ New end point --------
     path('ss',views.func.as_view()),
+    path('api/logout',views.token_exp.as_view()),
+    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist')
 ]

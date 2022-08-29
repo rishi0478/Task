@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'App',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # ...
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     )
     # ...
 }
+
+# SIMPLE_JWT = {
+    
+#     'AUTH_TOKEN_CLASSES': ('path_to_tokens_py.tokens.JWTAccessToken',),
+    
+# }

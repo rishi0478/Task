@@ -1,3 +1,5 @@
+from base64 import decode
+from urllib import request
 from django.contrib import messages
 from App.models import Profile,student_db
 from django.shortcuts import render,redirect
@@ -14,10 +16,14 @@ from App.utlis import Util
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse 
 from App.serializer import Login_user,Student_serializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import OutstandingToken
 
 # -------------------   Api Authenticaion -------------
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+import jwt
 # Create your views here.
 
 @api_view(['GET','POST'])
@@ -141,8 +147,8 @@ def serializer_login(request):
                 return Response({'msg':"Profile is not verified Check your email"},status=status.HTTP_204_NO_CONTENT)
 
 
-
-
+            global user_name_temp
+            user_name_temp = username
 
             user = authenticate(username = username, password = password)
             if user is not None:
@@ -158,14 +164,58 @@ class func(APIView):
     def get(self,request):
         raw_data = student_db.objects.all()
         serializer = Student_serializer(raw_data,many=True)
+        # token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+        # data = {'token': token}
+        # print(data)
+        # print(request.user.username)
+        # print(jwt.decode(token,'',algorithm=['HS256']))
         return Response(serializer.data)
 
     def post(self,request):
         serializer = Student_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            stu_obj = serializer.data.get('name')
+            raw_id = student_db.objects.filter(name__exact=stu_obj).values('id')
+            filter_key = raw_id[0]['id']
+            var = student_db.objects.get(id = filter_key)
+            hold_username = request.user.username
+            var.created_by = hold_username
+            var.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+class token_exp(APIView):
+    def post(self,request):
+        # print(request.user.auth_token,"here")
+        # logout(request)
+        # breakpoint()
+        # acess_token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        refresh_token = RefreshToken(request.data.get('refresh'))
+        print(refresh_token,"--------->")
+        OutstandingToken.objects.filter(token=refresh_token).delete()
+        # print(dd)
+
+        return Response("f")
+        # try:
+        #     tokens = RefreshToken(request.data.get('refresh'))
+        #     print(tokens)
+        #     print(request.user.username,"------")
+        #     tokens.blacklist()
+            
+        #     return Response({"Token is expired"},status=status.HTTP_200_OK)
+        
+        # except Exception as e:
+        #     print(str(e))
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
 
 
 

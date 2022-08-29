@@ -24,5 +24,5 @@ class Login_user(serializers.ModelSerializer):
 class Student_serializer(serializers.ModelSerializer):
     class Meta:
         model = student_db
-        fields = "__all__"
+        fields = ['name','roll_no']
 

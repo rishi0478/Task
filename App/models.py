@@ -19,4 +19,5 @@ class Login_model(models.Model):
 class student_db(models.Model):
     name = models.CharField(max_length=20)
     roll_no = models.IntegerField()
+    created_by = models.CharField(max_length=30,null=True)
 
